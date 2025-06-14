@@ -1,4 +1,4 @@
-import { Client, GatewayIntentBits, ActivityType } from 'discord.js';
+import { Client, GatewayIntentBits, ActivityType, Events } from 'discord.js';
 import express from 'express';
 
 const app = express();

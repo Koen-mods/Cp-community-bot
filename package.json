@@ -1,4 +1,5 @@
 {
+  "type": "module",
   "name": "Create Paradise community",
   "version": "1.0.0",
   "main": "bot.js",

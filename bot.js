@@ -38,7 +38,7 @@ client.on('messageCreate', async (message) => {
   try {
     const response = await fetch('https://cp-webhook.vercel.app/api/webhook', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: { 'Content-Type': 'application/json', "x-api-key": process.env.API_KEY },
         body: JSON.stringify({
           content: message.content,
           username: message.author.username,

@@ -3,11 +3,11 @@ const { REST, Routes, SlashCommandBuilder } = require('discord.js');
 
 const commands = [
   new SlashCommandBuilder()
-    .setName('ask')
-    .setDescription('Ask LLaMA a question')
+    .setName('vraag')
+    .setDescription('Vraag LLaMA iets')
     .addStringOption(option =>
       option.setName('prompt')
-        .setDescription('What do you want to ask LLaMA?')
+        .setDescription('Wat wil je vragen aan LLaMA?')
         .setRequired(true)
     )
     .toJSON()

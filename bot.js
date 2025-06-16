@@ -72,7 +72,7 @@ client.on('interactionCreate', async interaction => {
       const response = await fetch('https://api.together.xyz/v1/chat/completions', {
         method: 'POST',
         headers: {
-          'Authorization': `Bearer ${TOGETHER_API_KEY}`,
+          'Authorization': `Bearer ${process.env.TOGETHER_API_KEY}`,
           'Content-Type': 'application/json'
         },
         body: JSON.stringify({

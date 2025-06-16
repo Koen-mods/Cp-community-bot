@@ -60,15 +60,16 @@ client.on('messageCreate', async (message) => {
   }
 });
 
-client.on('interactionCreate', async interaction => {
+client.on('interactionCreate', async (interaction) => {
   if (!interaction.isChatInputCommand()) return;
 
   if (interaction.commandName === 'vraag') {
+    await interaction.deferReply();  // defer immediately
+
     const prompt = interaction.options.getString('prompt');
 
-    await interaction.deferReply();
-
     try {
+      // Fetch from Together.ai
       const response = await fetch('https://api.together.xyz/v1/chat/completions', {
         method: 'POST',
         headers: {
@@ -84,20 +85,32 @@ client.on('interactionCreate', async interaction => {
         })
       });
 
+      if (!response.ok) {
+        const errorText = await response.text();
+        return await interaction.editReply(`API error: ${errorText}`);
+      }
+
       const data = await response.json();
 
-      if (data.choices && data.choices.length > 0) {
-        await interaction.editReply(data.choices[0].message.content);
-      } else {
-        console.error(data);
-        await interaction.editReply('⚠️ No response from LLaMA.');
+      // Extract the generated content text
+      const replyText = data.choices?.[0]?.message?.content;
+
+      if (!replyText || typeof replyText !== 'string') {
+        return await interaction.editReply('⚠️ No valid response from AI.');
       }
+
+      // Discord message limit is 2000 characters
+      const slicedReply = replyText.length > 2000 ? replyText.slice(0, 1997) + '...' : replyText;
+
+      await interaction.editReply(slicedReply);
+
     } catch (err) {
       console.error(err);
-      await interaction.editReply('⚠️ Error contacting Together.ai.');
+      await interaction.editReply('⚠️ Error contacting AI service.');
     }
   }
 });
+
 
 
 client.login(process.env.DISCORD_TOKEN);

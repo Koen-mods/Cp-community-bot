@@ -60,42 +60,41 @@ client.on('messageCreate', async (message) => {
   }
 });
 
-client.on(Events.InteractionCreate, async interaction => {
+client.on('interactionCreate', async interaction => {
   if (!interaction.isChatInputCommand()) return;
 
   if (interaction.commandName === 'vraag') {
     const prompt = interaction.options.getString('prompt');
-    await interaction.deferReply(); // Prevent timeout
 
-    const llamaPrompt = `### Instruction:\n${prompt}\n\n### Response:`;
+    await interaction.deferReply();
 
     try {
-      const res = await axios.post(
-        'https://api-inference.huggingface.co/models/meta-llama/Meta-Llama-3-8B-Instruct',
-        {
-          inputs: llamaPrompt,
-          parameters: {
-            max_new_tokens: 200,
-            temperature: 0.7
-          }
+      const response = await fetch('https://api.together.xyz/v1/chat/completions', {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${TOGETHER_API_KEY}`,
+          'Content-Type': 'application/json'
         },
-        {
-          headers: {
-            Authorization: `Bearer ${process.env.HF_TOKEN}`
-          }
-        }
-      );
+        body: JSON.stringify({
+          model: 'meta-llama/Llama-3-8b-chat',
+          messages: [
+            { role: 'system', content: 'You are a helpful assistant.' },
+            { role: 'user', content: prompt }
+          ]
+        })
+      });
 
-      console.log("Hugging Face response:", res.data);
+      const data = await response.json();
 
-      const fullResponse = res.data?.[0]?.generated_text || "No response.";
-      const reply = fullResponse.split("### Response:")[1]?.trim() || fullResponse;
-
-      await interaction.editReply(reply.slice(0, 2000));
-
+      if (data.choices && data.choices.length > 0) {
+        await interaction.editReply(data.choices[0].message.content);
+      } else {
+        console.error(data);
+        await interaction.editReply('⚠️ No response from LLaMA.');
+      }
     } catch (err) {
-      console.error("Hugging Face API error:", err?.response?.data || err.message);
-      await interaction.editReply("❌ Error getting response from LLaMA.");
+      console.error(err);
+      await interaction.editReply('⚠️ Error contacting Together.ai.');
     }
   }
 });

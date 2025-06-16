@@ -62,7 +62,7 @@ client.on('messageCreate', async (message) => {
 client.on(Events.InteractionCreate, async interaction => {
   if (!interaction.isChatInputCommand()) return;
 
-  if (interaction.commandName === 'ask') {
+  if (interaction.commandName === 'vraag') {
     const prompt = interaction.options.getString('prompt');
 
     await interaction.deferReply(); // Prevent timeout

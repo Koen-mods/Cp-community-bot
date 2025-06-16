@@ -86,6 +86,8 @@ client.on(Events.InteractionCreate, async interaction => {
         }
       );
 
+      console.log("Hugging Face response:", res.data);
+
       const fullResponse = res.data?.[0]?.generated_text || "No response.";
       const reply = fullResponse.split("### Response:")[1]?.trim() || fullResponse;
 

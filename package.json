@@ -4,7 +4,8 @@
   "version": "1.0.0",
   "main": "bot.js",
   "scripts": {
-    "start": "node bot.js"
+    "start": "node bot.js",
+    "deploy": "deploy-commands.js"
   },
   "dependencies": {
     "discord.js": "^14.0.0",

@@ -64,14 +64,15 @@ client.on(Events.InteractionCreate, async interaction => {
 
   if (interaction.commandName === 'vraag') {
     const prompt = interaction.options.getString('prompt');
-
     await interaction.deferReply(); // Prevent timeout
+
+    const llamaPrompt = `### Instruction:\n${prompt}\n\n### Response:`;
 
     try {
       const res = await axios.post(
         'https://api-inference.huggingface.co/models/meta-llama/Meta-Llama-3-8B-Instruct',
         {
-          inputs: prompt,
+          inputs: llamaPrompt,
           parameters: {
             max_new_tokens: 200,
             temperature: 0.7
@@ -84,15 +85,18 @@ client.on(Events.InteractionCreate, async interaction => {
         }
       );
 
-      const reply = res.data?.[0]?.generated_text || "No response.";
+      const fullResponse = res.data?.[0]?.generated_text || "No response.";
+      const reply = fullResponse.split("### Response:")[1]?.trim() || fullResponse;
+
       await interaction.editReply(reply.slice(0, 2000));
 
     } catch (err) {
-      console.error(err?.response?.data || err.message);
-      await interaction.editReply("Error getting response from LLaMA.");
+      console.error("Hugging Face API error:", err?.response?.data || err.message);
+      await interaction.editReply("❌ Error getting response from LLaMA.");
     }
   }
 });
+
 
 client.login(process.env.DISCORD_TOKEN);
 

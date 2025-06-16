@@ -60,16 +60,37 @@ client.on('messageCreate', async (message) => {
   }
 });
 
+// Helper function to split long messages nicely
+function chunkMessage(message, maxLength = 2000) {
+  const chunks = [];
+  let start = 0;
+  while (start < message.length) {
+    let end = start + maxLength;
+
+    // Try to break on a newline for nicer splits
+    if (end < message.length) {
+      const lastNewLine = message.lastIndexOf('\n', end);
+      if (lastNewLine > start) {
+        end = lastNewLine + 1;
+      }
+    }
+
+    chunks.push(message.slice(start, end));
+    start = end;
+  }
+  return chunks;
+}
+
+// Your interaction handler
 client.on('interactionCreate', async (interaction) => {
   if (!interaction.isChatInputCommand()) return;
 
   if (interaction.commandName === 'vraag') {
-    await interaction.deferReply();  // defer immediately
+    await interaction.deferReply();
 
     const prompt = interaction.options.getString('prompt');
 
     try {
-      // Fetch from Together.ai
       const response = await fetch('https://api.together.xyz/v1/chat/completions', {
         method: 'POST',
         headers: {
@@ -91,18 +112,22 @@ client.on('interactionCreate', async (interaction) => {
       }
 
       const data = await response.json();
-
-      // Extract the generated content text
       const replyText = data.choices?.[0]?.message?.content;
 
       if (!replyText || typeof replyText !== 'string') {
         return await interaction.editReply('⚠️ No valid response from AI.');
       }
 
-      // Discord message limit is 2000 characters
-      const slicedReply = replyText.length > 2000 ? replyText.slice(0, 1997) + '...' : replyText;
+      const chunks = chunkMessage(replyText);
 
-      await interaction.editReply(slicedReply);
+      // Send first chunk with editReply, others with followUp
+      for (let i = 0; i < chunks.length; i++) {
+        if (i === 0) {
+          await interaction.editReply(chunks[i]);
+        } else {
+          await interaction.followUp(chunks[i]);
+        }
+      }
 
     } catch (err) {
       console.error(err);
@@ -110,6 +135,7 @@ client.on('interactionCreate', async (interaction) => {
     }
   }
 });
+
 
 
 

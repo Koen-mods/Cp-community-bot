@@ -76,7 +76,7 @@ client.on('interactionCreate', async interaction => {
           'Content-Type': 'application/json'
         },
         body: JSON.stringify({
-          model: 'meta-llama/Llama-3-8b-chat',
+          model: 'meta-llama/Llama-Vision-Free',
           messages: [
             { role: 'system', content: 'You are a helpful assistant.' },
             { role: 'user', content: prompt }

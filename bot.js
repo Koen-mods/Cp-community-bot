@@ -1,5 +1,6 @@
 import { Client, GatewayIntentBits, ActivityType, Events } from 'discord.js';
 import express from 'express';
+import axios from 'axios';
 
 const app = express();
 const PORT = process.env.PORT || 3000;

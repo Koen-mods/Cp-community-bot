@@ -1,4 +1,4 @@
-import { Client, GatewayIntentBits, ActivityType, Events } from 'discord.js';
+import { Client, GatewayIntentBits, ActivityType, Events, Collection } from 'discord.js';
 import express from 'express';
 import axios from 'axios';
 import fs from 'fs';

@@ -3,6 +3,7 @@ import express from 'express';
 import axios from 'axios';
 import fs from 'fs';
 import mongoose from 'mongoose';
+import UserXP from './models/UserXP.js';
 
 mongoose.connect(process.env.DB_URL, {
   useNewUrlParser: true,
@@ -60,20 +61,25 @@ client.on('messageCreate', async (message) => {
   const userId = message.author.id;
   const xpGain = Math.floor(Math.random() * 10) + 5;
 
-  if (!xpData[userId]) {
-    xpData[userId] = { xp: 0, level: 1 };
+  let user = await UserXP.findOne({ userId });
+  if (!user) {
+    user = new UserXP({ userId });
   }
 
-  xpData[userId].xp += xpGain;
+  user.xp += xpGain;
+  const nextLevelXP = user.level * 100;
 
-  const nextLevelXp = xpData[userId].level * 100;
-  if (xpData[userId].xp >= nextLevelXp) {
-    xpData[userId].level++;
-    xpData[userId].xp = 0;
-    message.channel.send(`🎉 ${message.author} is nu level ${xpData[userId].level}!`);
+  if (user.xp >= nextLevelXP) {
+    user.level++;
+    user.xp = 0;
+    message.channel.send(`🎉 ${message.author} is nu level ${user.level}!`);
   }
 
-  saveXP();
+  await user.save();
+
+  if (message.content.startsWith('!level')) {
+    message.channel.send(`${message.author.username} is level ${user.level} met ${user.xp} XP.`);
+  }
 
   if (message.content.startsWith('!level')) {
   const user = message.mentions.users.first() || message.author;

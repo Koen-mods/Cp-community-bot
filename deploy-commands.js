@@ -16,7 +16,7 @@ const commands = [
     .setDescription('Spam een prachtige zin in de chat xD')
     .toJSON(),
   new SlashCommandBuilder()
-  .setName('verbale waarschuwing')
+  .setName('verbale-waarschuwing')
   .setDescription('Geef iemand een verbale waarschuwing')
   .addStringOption(option =>
     option

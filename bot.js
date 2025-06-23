@@ -4,6 +4,10 @@ import axios from 'axios';
 import fs from 'fs';
 import mongoose from 'mongoose';
 import UserXP from './models/UserXP.js';
+import path from 'path';
+import { fileURLToPath } from 'url';
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 mongoose.connect(process.env.DB_URL, {
   useNewUrlParser: true,
@@ -25,6 +29,16 @@ const client = new Client({
     GatewayIntentBits.MessageContent // This one requires special permission!
   ],
 });
+
+client.commands = new Collection();
+
+const commandsPath = path.join(__dirname, 'commands');
+const commandFiles = fs.readdirSync(commandsPath).filter(file => file.endsWith('.js'));
+
+for (const file of commandFiles) {
+  const { data, execute } = await import(path.join(commandsPath, file));
+  client.commands.set(data.name, { data, execute });
+}
 
 import fetch from 'node-fetch'; // for ESM; if CommonJS: const fetch = require('node-fetch');
 

@@ -10,7 +10,11 @@ const commands = [
         .setDescription('Wat wil je vragen aan LLaMA?')
         .setRequired(true)
     )
-    .toJSON()
+    .toJSON(),
+  new SlashCommandBuilder()
+    .setName('spam')
+    .setDescription('Spam een prachtige zin in de chat xD')
+    .toJSON(),
 ];
 
 const rest = new REST({ version: '10' }).setToken(process.env.DISCORD_TOKEN);

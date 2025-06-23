@@ -60,6 +60,16 @@ client.on('messageCreate', async (message) => {
 
   saveXP();
 
+  if (message.content.startsWith('!level')) {
+  const user = message.mentions.users.first() || message.author;
+  const data = xpData[user.id];
+  if (data) {
+    message.channel.send(`${user.username} is level ${data.level} met ${data.xp} XP.`);
+  } else {
+    message.channel.send(`${user.username} heeft nog geen XP.`);
+  }
+}
+
   // Only act on the specific channel
   if (message.channel.id !== '1374807938593591413' && message.channel.id !== '1382778106087079967') return;
   try {
@@ -84,16 +94,6 @@ client.on('messageCreate', async (message) => {
   } catch (error) {
     console.error('Error sending webhook:', error);
   }
-
-  if (message.content.startsWith('!level')) {
-  const user = message.mentions.users.first() || message.author;
-  const data = xpData[user.id];
-  if (data) {
-    message.channel.send(`${user.username} is level ${data.level} met ${data.xp} XP.`);
-  } else {
-    message.channel.send(`${user.username} heeft nog geen XP.`);
-  }
-}
 });
 
 // Helper function to split long messages nicely

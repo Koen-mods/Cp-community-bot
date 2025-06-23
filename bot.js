@@ -1,6 +1,7 @@
 import { Client, GatewayIntentBits, ActivityType, Events } from 'discord.js';
 import express from 'express';
 import axios from 'axios';
+import fs from 'fs'
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -31,8 +32,33 @@ client.once('ready', () => {
   }, 10_000); // every 10 seconds
 });
 
+const xpFile = './xpData.json';
+let xpData = fs.existsSync(xpFile) ? JSON.parse(fs.readFileSync(xpFile)) : {};
+
+function saveXP() {
+  fs.writeFileSync(xpFile, JSON.stringify(xpData, null, 2));
+}
+
 client.on('messageCreate', async (message) => {
   if (message.author.bot) return;
+
+  const userId = message.author.id;
+  const xpGain = Math.floor(Math.random() * 10) + 5;
+
+  if (!xpData[userId]) {
+    xpData[userId] = { xp: 0, level: 1 };
+  }
+
+  xpData[userId].xp += xpGain;
+
+  const nextLevelXp = xpData[userId].level * 100;
+  if (xpData[userId].xp >= nextLevelXp) {
+    xpData[userId].level++;
+    xpData[userId].xp = 0;
+    message.channel.send(`🎉 ${message.author} is nu level ${xpData[userId].level}!`);
+  }
+
+  saveXP();
 
   // Only act on the specific channel
   if (message.channel.id !== '1374807938593591413' && message.channel.id !== '1382778106087079967') return;
@@ -57,6 +83,15 @@ client.on('messageCreate', async (message) => {
   }
   } catch (error) {
     console.error('Error sending webhook:', error);
+  }
+
+  if (message.content.startsWith('!level')) {
+  const user = message.mentions.users.first() || message.author;
+  const data = xpData[user.id];
+  if (data) {
+    message.channel.send(`${user.username} is level ${data.level} met ${data.xp} XP.`);
+  } else {
+    message.channel.send(`${user.username} heeft nog geen XP.`);
   }
 });
 

@@ -1,15 +1,5 @@
 import { SlashCommandBuilder } from 'discord.js';
 
-export const data = new SlashCommandBuilder()
-  .setName('verbale waarschuwing')
-  .setDescription('Geef iemand een verbale waarschuwing')
-  .addStringOption(option =>
-    option
-      .setName('reden')
-      .setDescription('Reden voor waarschuwing')
-      .setRequired(true)
-  );
-
 const reden = interaction.options.getString('reden');
 
 export async function execute(interaction) {

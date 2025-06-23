@@ -36,7 +36,12 @@ const xpFile = './xpData.json';
 let xpData = fs.existsSync(xpFile) ? JSON.parse(fs.readFileSync(xpFile)) : {};
 
 function saveXP() {
-  fs.writeFileSync(xpFile, JSON.stringify(xpData, null, 2));
+  try {
+    fs.writeFileSync('./xpData.json', JSON.stringify(xpData, null, 2));
+    console.log('XP saved to file.');
+  } catch (err) {
+    console.error('Failed to write xpData.json:', err);
+  }
 }
 
 client.on('messageCreate', async (message) => {

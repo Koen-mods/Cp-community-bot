@@ -1,5 +1,10 @@
 import { SlashCommandBuilder } from 'discord.js';
 
+export const data = {
+  name: 'verbale-waarschuwing',
+  description: 'Geef iemand een verbale waarschuwing',
+};
+
 export async function execute(interaction) {
   const reden = interaction.options.getString('reden');
   const embed = new EmbedBuilder()

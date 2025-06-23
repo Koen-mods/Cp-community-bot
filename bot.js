@@ -139,56 +139,21 @@ function chunkMessage(message, maxLength = 2000) {
 }
 
 // Your interaction handler
-client.on('interactionCreate', async (interaction) => {
+client.on('interactionCreate', async interaction => {
   if (!interaction.isChatInputCommand()) return;
 
-  if (interaction.commandName === 'vraag') {
-    await interaction.deferReply();
+  const command = client.commands.get(interaction.commandName);
 
-    const prompt = interaction.options.getString('prompt');
+  if (!command) return;
 
-    try {
-      const response = await fetch('https://api.together.xyz/v1/chat/completions', {
-        method: 'POST',
-        headers: {
-          'Authorization': `Bearer ${process.env.TOGETHER_API_KEY}`,
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({
-          model: 'meta-llama/Llama-Vision-Free',
-          messages: [
-            { role: 'system', content: 'You are a helpful assistant.' },
-            { role: 'user', content: prompt }
-          ]
-        })
-      });
-
-      if (!response.ok) {
-        const errorText = await response.text();
-        return await interaction.editReply(`API error: ${errorText}`);
-      }
-
-      const data = await response.json();
-      const replyText = data.choices?.[0]?.message?.content;
-
-      if (!replyText || typeof replyText !== 'string') {
-        return await interaction.editReply('⚠️ No valid response from AI.');
-      }
-
-      const chunks = chunkMessage(replyText);
-
-      // Send first chunk with editReply, others with followUp
-      for (let i = 0; i < chunks.length; i++) {
-        if (i === 0) {
-          await interaction.editReply(chunks[i]);
-        } else {
-          await interaction.followUp(chunks[i]);
-        }
-      }
-
-    } catch (err) {
-      console.error(err);
-      await interaction.editReply('⚠️ Error contacting AI service.');
+  try {
+    await command.execute(interaction);
+  } catch (error) {
+    console.error(`❌ Error executing ${interaction.commandName}:`, error);
+    if (interaction.replied || interaction.deferred) {
+      await interaction.followUp({ content: 'Er ging iets mis bij het uitvoeren van dit commando.', ephemeral: true });
+    } else {
+      await interaction.reply({ content: 'Er ging iets mis bij het uitvoeren van dit commando.', ephemeral: true });
     }
   }
 });

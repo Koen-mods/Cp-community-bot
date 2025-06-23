@@ -7,4 +7,6 @@ const userXPSchema = new mongoose.Schema({
   level: { type: Number, default: 1 }
 });
 
+const UserXP = mongoose.model('UserXP', userXPSchema);
+
 export default UserXP;

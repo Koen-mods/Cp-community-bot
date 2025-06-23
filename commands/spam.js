@@ -14,8 +14,9 @@ export async function execute(interaction) {
   return interaction.reply({ content: 'Je hebt niet de juiste rol om dit commando te gebruiken.', ephemeral: true });
   }
 
+  await interaction.reply('Help, let me go!');
   // Hier komt de logica van je commando
   for (let i = 0; i < 1000; i++){
-    await interaction.reply('Help let me go!');
+    await interaction.followUp('Help, let me go!');
   }
 }

@@ -93,6 +93,7 @@ client.on('messageCreate', async (message) => {
   } else {
     message.channel.send(`${user.username} heeft nog geen XP.`);
   }
+}
 });
 
 // Helper function to split long messages nicely

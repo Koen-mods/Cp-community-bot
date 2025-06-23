@@ -1,7 +1,17 @@
 import { Client, GatewayIntentBits, ActivityType, Events } from 'discord.js';
 import express from 'express';
 import axios from 'axios';
-import fs from 'fs'
+import fs from 'fs';
+import mongoose from 'mongoose';
+
+mongoose.connect(process.env.DB_URL, {
+  useNewUrlParser: true,
+  useUnifiedTopology: true
+}).then(() => {
+  console.log('✅ Connected to MongoDB');
+}).catch((err) => {
+  console.error('❌ MongoDB connection error:', err);
+});
 
 const app = express();
 const PORT = process.env.PORT || 3000;

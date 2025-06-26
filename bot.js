@@ -60,6 +60,7 @@ client.once('ready', () => {
 
 client.on('guildMemberAdd', async member => {
     // Create canvas
+    console.log('new member registered!');
     const canvas = createCanvas(700, 250);
     const ctx = canvas.getContext('2d');
     

@@ -60,26 +60,23 @@ client.once('ready', () => {
 });
 
 client.on('guildMemberAdd', async member => {
-    // Create canvas
-    console.log('new member registered!');
+    console.log('new member registered!', member.user.tag);
+  
+  try {
     const canvas = createCanvas(700, 250);
     const ctx = canvas.getContext('2d');
     
-    // Load background image (replace with your own)
+    // Background (replace with your own image)
     const background = await loadImage('https://i.imgur.com/zvWTUVu.jpg');
     ctx.drawImage(background, 0, 0, canvas.width, canvas.height);
     
-    // Add username
+    // Text
     ctx.font = '35px "Arial"';
     ctx.fillStyle = '#ffffff';
     ctx.textAlign = 'center';
     ctx.fillText(`Welcome ${member.user.username}`, canvas.width / 2, canvas.height / 1.8);
     
-    // Add server name
-    ctx.font = '25px "Arial"';
-    ctx.fillText(`to ${member.guild.name}`, canvas.width / 2, canvas.height / 1.5);
-    
-    // Add avatar
+    // Avatar (circular mask)
     ctx.beginPath();
     ctx.arc(125, 125, 100, 0, Math.PI * 2, true);
     ctx.closePath();
@@ -88,12 +85,15 @@ client.on('guildMemberAdd', async member => {
     const avatar = await loadImage(member.user.displayAvatarURL({ extension: 'jpg', size: 1024 }));
     ctx.drawImage(avatar, 25, 25, 200, 200);
     
-    // Send the image
+    // Send to Discord
     const channel = member.guild.systemChannel;
     if (channel) {
-        const attachment = new AttachmentBuilder(canvas.toBuffer(), 'welcome.png');
-        channel.send({ content: `Welcome ${member}!`, files: [attachment] });
+      const attachment = new AttachmentBuilder(canvas.toBuffer(), { name: 'welcome.png' });
+      channel.send({ content: `Welcome ${member}!`, files: [attachment] });
     }
+  } catch (error) {
+    console.error('Error creating welcome image:', error);
+  }
 });
 
 

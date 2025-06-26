@@ -27,7 +27,8 @@ const client = new Client({
   intents: [
     GatewayIntentBits.Guilds,
     GatewayIntentBits.GuildMessages,
-    GatewayIntentBits.MessageContent // This one requires special permission!
+    GatewayIntentBits.MessageContent, // This one requires special permission!
+    GatewayIntentBits.GuildMembers
   ],
 });
 

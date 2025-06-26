@@ -70,7 +70,7 @@ client.on('guildMemberAdd', async member => {
     ctx.drawImage(background, 0, 0, canvas.width, canvas.height);
     
     // Text
-    ctx.font = '30px "FreeSans", "Noto", sans-serif';
+    ctx.font = '30px sans-serif';
     ctx.fillStyle = '#ffffff';
     ctx.textAlign = 'center';
     ctx.fillText(`Welcome ${member.user.username}`, canvas.width / 2, canvas.height / 1.8);

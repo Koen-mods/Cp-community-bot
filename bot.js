@@ -22,9 +22,6 @@ mongoose.connect(process.env.DB_URL, {
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-registerFont('/usr/share/fonts/truetype/noto/NotoSans-Regular.ttf', { family: 'Noto Sans' });
-registerFont('/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf', { family: 'DejaVu Sans' });
-
 const client = new Client({
   intents: [
     GatewayIntentBits.Guilds,
@@ -73,7 +70,7 @@ client.on('guildMemberAdd', async member => {
     ctx.drawImage(background, 0, 0, canvas.width, canvas.height);
     
     // Text
-    ctx.font = 'bold 36px "Noto Sans", "DejaVu Sans", sans-serif';
+    ctx.font = '30px "FreeSans", "Noto", sans-serif';
     ctx.fillStyle = '#ffffff';
     ctx.textAlign = 'center';
     ctx.fillText(`Welcome ${member.user.username}`, canvas.width / 2, canvas.height / 1.8);

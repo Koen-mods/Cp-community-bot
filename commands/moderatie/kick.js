@@ -1,7 +1,7 @@
 // commands/moderatie/kick.js
 export async function execute(interaction) {
   const user = interaction.options.getUser('Gebruiker');
-  const member = await interaction.guild.members.fetch(user.id).catch(() => null);
+  const member = await interaction.guild.members.fetch(user).catch(() => null);
 
   if (!member) {
     return interaction.reply({ content: 'Kan deze gebruiker niet vinden in de server.', ephemeral: true });

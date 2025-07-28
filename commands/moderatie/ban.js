@@ -1,6 +1,6 @@
 export async function execute(interaction) {
   const user = interaction.options.getUser('Gebruiker');
-  const member = await interaction.guild.members.fetch(user.id).catch(() => null);
+  const member = await interaction.guild.members.fetch(user).catch(() => null);
 
   if (!interaction.member.permissions.has('BanMembers')) {
     const channel = client.channels.cache.get('1393239819806572737');

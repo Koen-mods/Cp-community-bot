@@ -1,4 +1,4 @@
-
+//deploy-commands.js
 import { REST, Routes, SlashCommandBuilder } from 'discord.js';
 
 const commands = [
@@ -12,10 +12,6 @@ const commands = [
     )
     .toJSON(),
   new SlashCommandBuilder()
-    .setName('spam')
-    .setDescription('Spam een prachtige zin in de chat xD')
-    .toJSON(),
-  new SlashCommandBuilder()
   .setName('verbale-waarschuwing')
   .setDescription('Geef iemand een verbale waarschuwing')
   .addStringOption(option =>
@@ -24,7 +20,22 @@ const commands = [
       .setDescription('Reden voor waarschuwing')
       .setRequired(true)
   )
-  .toJSON()
+  .toJSON(),
+  new SlashCommandBuilder()
+  .setName('moderatie')
+  .setDescription("Moderatie commando's")
+  .addSubcommand(subcommand =>
+    subcommand
+      .setName('ban')
+      .setDescription('Ban iemand')
+      .addUserOption(option =>
+        option.setName('Gebruiker').setDescription('Gebruiker om te bannen').setRequired(true)))
+  .addSubcommand(subcommand =>
+    subcommand
+      .setName('kick')
+      .setDescription('Kick iemand')
+      .addUserOption(option =>
+        option.setName('Gebruiker').setDescription('Gebruiker om te kicken').setRequired(true))).toJSON()
 ];
 
 const rest = new REST({ version: '10' }).setToken(process.env.DISCORD_TOKEN);

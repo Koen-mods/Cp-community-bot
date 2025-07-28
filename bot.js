@@ -1,6 +1,6 @@
+//bot.js
 import { Client, GatewayIntentBits, ActivityType, Events, Collection } from 'discord.js';
 import express from 'express';
-import axios from 'axios';
 import fs from 'fs';
 import mongoose from 'mongoose';
 import UserXP from './models/UserXP.js';
@@ -8,7 +8,6 @@ import path from 'path';
 import { fileURLToPath } from 'url';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
-import { createCanvas, loadImage, registerFont } from 'canvas';
 
 mongoose.connect(process.env.DB_URL, {
   useNewUrlParser: true,
@@ -31,8 +30,6 @@ const client = new Client({
   ],
 });
 
-registerFont('./fonts/roboto-regular.ttf', { family: 'Roboto' });
-
 client.commands = new Collection();
 
 const commandsPath = path.join(__dirname, 'commands');
@@ -46,8 +43,8 @@ for (const file of commandFiles) {
 import fetch from 'node-fetch'; // for ESM; if CommonJS: const fetch = require('node-fetch');
 
 const activities = [
-  { name: 'Koen', type: ActivityType.Listening },
-  { name: 'createparadisemc.minecraft.best', type: ActivityType.Playing },
+  { name: 'Mensen die support nodig hebben', type: ActivityType.Listening },
+  { name: 'play.createparadise.nl', type: ActivityType.Playing },
 ];
 
 client.once('ready', () => {
@@ -58,43 +55,6 @@ client.once('ready', () => {
     client.user.setActivity(activities[index]);
     index = (index + 1) % activities.length;
   }, 10_000); // every 10 seconds
-});
-
-client.on('guildMemberAdd', async member => {
-    console.log('new member registered!', member.user.tag);
-  
-  try {
-    const canvas = createCanvas(700, 250);
-    const ctx = canvas.getContext('2d');
-    
-    // Background (replace with your own image)
-    const background = await loadImage('https://i.imgur.com/zvWTUVu.jpg');
-    ctx.drawImage(background, 0, 0, canvas.width, canvas.height);
-    
-    // Text
-    ctx.font = '30px Roboto';
-    ctx.fillStyle = '#ffffff';
-    ctx.textAlign = 'center';
-    ctx.fillText(`Welcome ${member.user.username}`, canvas.width / 2, canvas.height / 1.8);
-    
-    // Avatar (circular mask)
-    ctx.beginPath();
-    ctx.arc(125, 125, 100, 0, Math.PI * 2, true);
-    ctx.closePath();
-    ctx.clip();
-    
-    const avatar = await loadImage(member.user.displayAvatarURL({ extension: 'jpg', size: 1024 }));
-    ctx.drawImage(avatar, 25, 25, 200, 200);
-    
-    // Send to Discord
-    const channel = member.guild.systemChannel;
-    if (channel) {
-      const attachment = new AttachmentBuilder(canvas.toBuffer(), { name: 'welcome.png' });
-      channel.send({ content: `Welcome ${member}!`, files: [attachment] });
-    }
-  } catch (error) {
-    console.error('Error creating welcome image:', error);
-  }
 });
 
 

@@ -1,19 +1,48 @@
 export async function execute(interaction) {
-  const user = interaction.options.getUser('Gebruiker');
-  const member = await interaction.guild.members.fetch(user).catch(() => null);
-
-  if (!interaction.member.permissions.has('BanMembers')) {
-    const channel = client.channels.cache.get('1393239819806572737');
-    if (channel && channel.isTextBased()) {
-        channel.send(`${interaction.user.tag} heeft geprobeerd ${user.tag} te verbannen!`);
+    const { client, options, guild, member: moderator } = interaction;
+    const user = options.getUser('Gebruiker');
+    
+    // Check permissions
+    if (!moderator.permissions.has(PermissionFlagsBits.BanMembers)) {
+        const channel = client.channels.cache.get('1393239819806572737');
+        if (channel?.isTextBased()) {
+            await channel.send(`${moderator.user.tag} heeft geprobeerd ${user.tag} te verbannen!`);
+        }
+        return interaction.reply({ 
+            content: 'Je hebt geen toestemming om dit commando te gebruiken!', 
+            ephemeral: true 
+        });
     }
-    return interaction.reply({ content: 'Je hebt geen toestemming om dit commando te gebruiken!', ephemeral: true });
-  }
 
-  if (!member) {
-    return interaction.reply({ content: 'Kan deze gebruiker niet vinden in de server.', ephemeral: true });
-  }
-
-  await member.ban({ reason: `Verbannen door ${interaction.user.tag}` });
-  return interaction.reply({ content: `${user.tag} is verbannen. 🔨`, ephemeral: true });
+    try {
+        // Fetch the member (use fetchBan if user not in server)
+        const member = await guild.members.fetch(user.id).catch(() => null);
+        
+        if (!member) {
+            // User might not be in server, try banning directly
+            await guild.bans.create(user, { 
+                reason: `Verbannen door ${moderator.user.tag}` 
+            });
+            return interaction.reply({ 
+                content: `${user.tag} is verbannen (was niet in server). 🔨`, 
+                ephemeral: true 
+            });
+        }
+        // Ban the member
+        await member.ban({ 
+            reason: `Verbannen door ${moderator.user.tag}` 
+        });
+        
+        return interaction.reply({ 
+            content: `${user.tag} is verbannen. 🔨`, 
+            ephemeral: true 
+        });
+        
+    } catch (error) {
+        console.error('Ban error:', error);
+        return interaction.reply({ 
+            content: 'Er ging iets mis tijdens het verbannen van deze gebruiker.', 
+            ephemeral: true 
+        });
+    }
 }

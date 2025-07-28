@@ -14,10 +14,6 @@ export async function execute(interaction) {
     return interaction.reply({ content: 'Kan deze gebruiker niet vinden in de server.', ephemeral: true });
   }
 
-  if (!member.bannable) {
-    return interaction.reply({ content: 'Ik kan deze gebruiker niet bannen (misschien heeft hij een hogere rol?).', ephemeral: true });
-  }
-
   await member.ban({ reason: `Verbannen door ${interaction.user.tag}` });
   return interaction.reply({ content: `${user.tag} is verbannen. 🔨`, ephemeral: true });
 }

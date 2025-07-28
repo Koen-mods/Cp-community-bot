@@ -12,14 +12,14 @@ export const data = new SlashCommandBuilder()
       .setName('ban')
       .setDescription('Ban iemand')
       .addUserOption(option =>
-        option.setName('Gebruiker').setDescription('Gebruiker om te bannen').setRequired(true))
+        option.setName('gebruiker').setDescription('Gebruiker om te bannen').setRequired(true))
   )
   .addSubcommand(subcommand =>
     subcommand
       .setName('kick')
       .setDescription('Kick iemand')
       .addUserOption(option =>
-        option.setName('Gebruiker').setDescription('Gebruiker om te kicken').setRequired(true))
+        option.setName('gebruiker').setDescription('Gebruiker om te kicken').setRequired(true))
   );
 
 export async function execute(interaction) {

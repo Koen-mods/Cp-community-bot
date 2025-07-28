@@ -29,13 +29,13 @@ const commands = [
       .setName('ban')
       .setDescription('Ban iemand')
       .addUserOption(option =>
-        option.setName('Gebruiker').setDescription('Gebruiker om te bannen').setRequired(true)))
+        option.setName('gebruiker').setDescription('Gebruiker om te bannen').setRequired(true)))
   .addSubcommand(subcommand =>
     subcommand
       .setName('kick')
       .setDescription('Kick iemand')
       .addUserOption(option =>
-        option.setName('Gebruiker').setDescription('Gebruiker om te kicken').setRequired(true))).toJSON()
+        option.setName('gebruiker').setDescription('Gebruiker om te kicken').setRequired(true))).toJSON()
 ];
 
 const rest = new REST({ version: '10' }).setToken(process.env.DISCORD_TOKEN);
